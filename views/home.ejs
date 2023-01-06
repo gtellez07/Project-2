@@ -1,5 +1,17 @@
 <%- include('partials/header.ejs', { user }) %>
-
-<h2>Welcome Home, user</h2>
-
+<h2>Welcome Home User</h2>
+<div class="container d-flex flex-wrap justify-content-between gap-5">
+<% data.meals.forEach(meal=>{ %> 
+    <div class="card" style="width: 18rem;">
+        <img src="<%=meal.strMealThumb  %>" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title"><%=meal.strMeal  %></h5>
+          <p class="card-text"><%=meal.strCategory  %> </p>
+          <form action="/recipes/:id" method="GET">
+            <input type="hidden" value="<%=meal.idMeal  %> " name="recipeId">
+          <button type="submit" class="btn btn-primary">Add to favorites</button></form>
+        </div>
+      </div>
+<% }) %> 
+</div>
 <%- include('partials/footer.ejs') %> 

@@ -4,6 +4,8 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const db = require('./models')
 const crypto = require('crypto-js')
+const axios = require('axios')
+const { createDomStream } = require('htmlparser2')
 
 
 //app config
@@ -14,6 +16,41 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 //tell express to parse incoming cookies
 app.use(cookieParser())
+app.use(express.json())
+
+
+
+app.get('/', async (req, res) => {
+ 
+    try {
+        let url = "https://www.themealdb.com/api/json/v1/1/search.php?s=Chicken";
+        let response = await axios.get(url);
+        // console.log(response.data);
+        res.render('home.ejs', {
+            user: res.locals.user,
+            data: response.data
+        })
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+app.get('/recipes/:id',async (req,res)=>{
+    try {
+        let recipeId = req.query.recipeId
+        console.log(typeof recipeId)
+        let url = `www.themealdb.com/api/json/v1/1/lookup.php?i=${recipeId}`;
+        console.log(url)
+        let response = await axios.get(url);
+        console.log(response.data);
+        res.render('detail.ejs', {
+            user: res.locals.user,
+            data: response.data
+        }) 
+    } catch (error) {
+        console.error(error);
+    }
+})
 
 //custom auth middleware that checks the cookies for a user id
 //and if it finds one, look up the user in the db
@@ -53,6 +90,7 @@ app.use((req, res, next) =>{
     next()
 })
 
+
 //routes and controllers
 app.get('/', (req, res) =>{
     console.log(res.locals)
@@ -62,7 +100,31 @@ app.get('/', (req, res) =>{
 })
 
 app.use('/users', require('./controllers/users'))
+
 //listen on a port
 app.listen(PORT, ()=>{
     console.log(`authenticating users on PORT ${PORT} 🔐`)
 })
+
+
+
+// const express = require("express");
+// const app = express();
+// const axios = require("axios");
+
+// app.use(express.urlencoded({ extended: false }));
+// app.set("view engine", "ejs");
+
+// app.get('/', (req, res) => {
+//     let URL = "https://www.themealdb.com/api/json/v1/1/random.php";
+//     axios.get(URL).then(apiResponse => {
+//         let meal = apiResponse.data.results;
+//         res.send('HELLO');
+//     })
+// })
+
+// app.use('/users', require('./controllers/users'))
+
+// app.listen(8000, () => {
+//   console.log(`listening on port 8000🎧`);
+// });

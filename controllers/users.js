@@ -81,7 +81,7 @@ router.post('/login', async (req, res)=>{
             const encryptedId = crypto.AES.encrypt(String(user.id), process.env.SECRET)
             const encryptedIdString = encryptedId.toString()
             //place the encrypted id in a cookie
-            res.cookie('userId', user.id)
+            res.cookie('userId', encryptedIdString)
             res.redirect('/users/profile')
         }
         //if the users supplied PW is incorrect

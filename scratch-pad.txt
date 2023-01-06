@@ -1,0 +1,45 @@
+//custom auth middleware that checks the cookies for a user id
+//and if it finds one, look up the user in the db
+//tell all downstream routes about this user
+app.use(async (req,res,next)=>{
+    try {
+        if(req.cookies.userId) {
+            // decrypt the user id and turn it into a string
+            const decryptedId = crypto.AES.decrypt(req.cookies.userId, process.env.SECRET)
+            const decryptedString = decryptedId.toString(crypto.enc.Utf8)
+            //the user is logged in, lets find them in the db
+            const user = await db.user.findByPk(req.cookies.userId)
+            //mount the logged in user on the res.locals
+            res.locals.user = user
+        } else {
+            //set the logged in user to be null for conditional rendering
+            res.locals.user = null
+        }
+        //move on to next middleware/route
+        next()
+    } catch (err){
+        console.log('error in auth middleware: 🔥🔥🔥', err)
+        //explicitly set user to null if there is an error
+        res.locals.user = null
+        next() //go to the next thing
+    }
+})
+
+//example custom middleware
+app.use((req, res, next) =>{
+    //our code goes here
+    // console.log("Hello from inside of the middleware")
+    console.log(`incoming request: ${req.method} - ${req.url}`)
+    //res.locals are a place that we can put data to share with 'downstream routes'
+    // res.locals.myData = 'hello i am data'
+    //invoke next to tell express to go to the next route or middle
+    next()
+})
+
+//routes and controllers
+app.get('/', (req, res) =>{
+    console.log(res.locals)
+    res.render('home.ejs', {
+        user: res.locals.user
+    })
+})
