@@ -105,26 +105,3 @@ app.use('/users', require('./controllers/users'))
 app.listen(PORT, ()=>{
     console.log(`authenticating users on PORT ${PORT} 🔐`)
 })
-
-
-
-// const express = require("express");
-// const app = express();
-// const axios = require("axios");
-
-// app.use(express.urlencoded({ extended: false }));
-// app.set("view engine", "ejs");
-
-// app.get('/', (req, res) => {
-//     let URL = "https://www.themealdb.com/api/json/v1/1/random.php";
-//     axios.get(URL).then(apiResponse => {
-//         let meal = apiResponse.data.results;
-//         res.send('HELLO');
-//     })
-// })
-
-// app.use('/users', require('./controllers/users'))
-
-// app.listen(8000, () => {
-//   console.log(`listening on port 8000🎧`);
-// });
