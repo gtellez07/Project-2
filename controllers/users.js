@@ -136,9 +136,19 @@ res.render('users/profile.ejs', {
         })
     }
 })
-router.post('/comment', async (req, res)=>{
-    res.send("im working")
-})
+
+// router.post('/comment', async (req, res)=>{
+//     try {
+//         const createComment = await db.comment.create({
+//             userId: req.body.userId,
+//             favoriteId: req.body.favoriteId,
+//             comment: req.body.comment
+//         })
+//         res.redirect(`/profile/${req.params.id}`)
+//     } catch (error) {
+//         console.log('cannot get info', error)
+//     }
+// })
 
 //export the router
 module.exports = router
