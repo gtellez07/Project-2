@@ -129,7 +129,7 @@ for (let key in faves) {
         //   console.log(response.data)
     data.push(response.data.meals[0])
 }
-console.log(data[0].strMeal)        
+// console.log(data[0].strMeal)        
 res.render('users/profile.ejs', {
             user: res.locals.user,
             data: data
