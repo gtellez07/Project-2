@@ -4,6 +4,7 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const db = require('./models')
 const crypto = require('crypto-js')
+const bcrypt = require('bcrypt')
 const axios = require('axios')
 const { createDomStream } = require('htmlparser2')
 
@@ -25,9 +26,9 @@ app.get('/', async (req, res) => {
     try {
         let url = "https://www.themealdb.com/api/json/v1/1/search.php?s=Chicken";
         let response = await axios.get(url);
-        // console.log(response.data);
+        console.log(response.data);
         res.render('home.ejs', {
-            user: res.locals.user,
+            user: req.cookies.userId,
             data: response.data
         })
     } catch (error) {
@@ -35,16 +36,84 @@ app.get('/', async (req, res) => {
     }
 })
 
-app.get('/recipes/:id',async (req,res)=>{
+app.get('/allRecipes', async (req, res) => {
     try {
-        let recipeId = req.query.recipeId
-        console.log(typeof recipeId)
-        let url = `www.themealdb.com/api/json/v1/1/lookup.php?i=${recipeId}`;
-        console.log(url)
+        res.render('allRecipes.ejs', {
+            user: req.cookies.userId,
+            data: null
+        })
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+app.get('/allRecipes:search', async (req, res) => {
+ 
+    try {
+        let searchValue = req.query.searchName
+        let url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchValue}`;
         let response = await axios.get(url);
         console.log(response.data);
-        res.render('detail.ejs', {
-            user: res.locals.user,
+        res.render('allRecipes.ejs', {
+            user: req.cookies.userId,
+            data: response.data
+        })
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+
+app.get('/favorites', async (req, res) => {
+ 
+    try {
+        userId = req.cookies.userId
+        data = null
+        // get favorite recipe id's from DB
+
+        // loop over list and call api
+        // for each favorite ->
+        let url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${recipeId}`;
+        let response = await axios.get(url);
+        console.log(response.data);
+        // spread opperator 
+        data = {...data, ...response.data};
+
+        //out of loop do this.
+        res.render('favorites.ejs', {
+            user: req.cookies.userId,
+            data: data
+        })
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+app.post('/recipes/:id',async (req,res)=>{
+    try {
+        let recipeId = req.body.recipeId
+        
+        let decryptedId = crypto.AES.decrypt(req.cookies.userId, process.env.SECRET)
+        let decryptedString = decryptedId.toString(crypto.enc.Utf8)
+        console.log(decryptedString)
+        const [newFavorite, created] = await db.favorite.findOrCreate({
+            where: {
+                recipeId: recipeId,
+                userId: decryptedString
+            }
+        })
+        if (!created){
+            newFavorite.userId = userId
+            newFavorite.recipeId = recipeId
+            await newFavorite.save()
+        }  
+    
+        let url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${recipeId}`;
+        // console.log(url)
+        let response = await axios.get(url);
+        // console.log(res.locals.user);
+        res.render('home.ejs', {
+            user: req.cookies.userId,
             data: response.data
         }) 
     } catch (error) {
@@ -62,7 +131,7 @@ app.use(async (req,res,next)=>{
             const decryptedId = crypto.AES.decrypt(req.cookies.userId, process.env.SECRET)
             const decryptedString = decryptedId.toString(crypto.enc.Utf8)
             //the user is logged in, lets find them in the db
-            const user = await db.user.findByPk(req.cookies.userId)
+            const user = await db.user.findByPk(decryptedString)
             //mount the logged in user on the res.locals
             res.locals.user = user
         } else {
@@ -100,6 +169,8 @@ app.get('/', (req, res) =>{
 })
 
 app.use('/users', require('./controllers/users'))
+
+// app.use('/allRecipes', require('./controllers/routes'))
 
 //listen on a port
 app.listen(PORT, ()=>{

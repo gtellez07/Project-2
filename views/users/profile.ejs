@@ -1,5 +1,16 @@
 <%- include('../partials/header', { user }) %>
 
-<h3> Hey, <%= user.email %> thanks for logging in to the app!</h3>
+<h3> Hey, <%= user.email %> Welcome back to the app!</h3>
+<% if(data.length > 0){data.forEach({%>
+    <%=fave.strFaveThumb  %>
+    <div class="card" style="width: 18rem;">
+        <img src="<%= fave.strMealThumb %>" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title"><%=fave.strMeal  %></h5>
+          <p class="card-text"><%=fave.strCategory  %> </p>
+          <p class="card-text"><%=fave.strInstructions %></p>
+        </div>
+      </div>
+<% })} %> 
 
 <%- include('../partials/footer') %>

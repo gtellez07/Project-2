@@ -4,6 +4,7 @@ const db = require('../models')
 const router = express.Router()
 const crypto = require('crypto-js')
 const bcrypt = require('bcrypt')
+const axios = require('axios')
 
 
 // mount our routes on the router
@@ -102,15 +103,41 @@ router.get('/logout', (req, res) =>{
 })
 
 //GET /user/profile -- show the user their profile page
-router.get('/profile', (req,res)=>{
+router.get('/profile', async (req,res)=>{
     //if the user is not logged in -- they are not allowed to be here
     if(!res.locals.user) {
         res.redirect('/users/login?message=You must authenticate before you are authorized to view this resource!')
     } else {
-        res.render('users/profile.ejs', {
-            user: res.locals.user
+        //get userId 
+        let id = res.locals.user.id
+        let faves = await db.favorite.findAll({
+            where: {
+                userId: id
+            }
+        })
+        let data = []
+        let url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=`;
+let fullUrl = '';
+
+for (let key in faves) {
+  fullUrl = ''
+    fullUrl = url + `${faves[key]["recipeId"]}`;
+//   console.log(fullUrl)
+//   console.log(`${key}: ${faves[key]["recipeId"]}`);
+  let response = await axios.get(fullUrl);
+//   console.log("data")
+        //   console.log(response.data)
+    data.push(response.data.meals[0])
+}
+console.log(data[0].strMeal)        
+res.render('users/profile.ejs', {
+            user: res.locals.user,
+            data: data
         })
     }
+})
+router.post('/comment', async (req, res)=>{
+    res.send("im working")
 })
 
 //export the router

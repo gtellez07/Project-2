@@ -2,6 +2,16 @@
 #
 ## Description
 #
+## Installation Instruction
+* Fork and Clone repo to your local repository
+* Run npm init-y to initialize npm
+* open the repo and navigate to package.json file and see a list of npm packages listed under dependencies
+* Run npm i in the terminal to download all required npm packages. node_modules should appear in the folder
+* Make sure node_modules and .env are in the gitignore file before committing to remote repository
+* Run sequelize db:create to create database in psql
+* Run sequelize db:migrate to migrate the models
+* 
+#
 # API
 # https://www.themealdb.com/api.php
 #

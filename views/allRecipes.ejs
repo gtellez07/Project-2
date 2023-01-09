@@ -1,0 +1,25 @@
+<%- include('partials/header.ejs', { user, data}) %>
+<h2>Search for recipes</h2>
+<div class="container d-flex flex-wrap justify-content-between gap-5">
+    <!-- create form to search -->
+    <form action="/allRecipes:search" method="GET">
+                <input name="searchName"/>
+              <button type="submit" class="btn btn-primary">Search</button></form>
+
+    <% if(data) { %> 
+        <% data.meals.forEach(meal=>{ %> 
+            <div class="card" style="width: 18rem;">
+                <img src="<%=meal.strMealThumb  %>" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title"><%=meal.strMeal  %></h5>
+                  <p class="card-text"><%=meal.strCategory  %></p>
+                  <p class="card-text"><%=meal.strInstructions  %></p>
+                  <form action="/recipes/:id" method="GET">
+                    <input type="hidden" value="<%=meal.idMeal  %> " name="recipeId">
+                  <button type="submit" class="btn btn-primary">Add to favorites</button></form>
+                </div>
+              </div>
+        <% }) %> 
+    <% }%>
+    
+<%- include('partials/footer.ejs') %> 
