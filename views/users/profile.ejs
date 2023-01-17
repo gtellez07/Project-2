@@ -9,6 +9,11 @@
           <h5 class="card-title"><%=fave.strMeal  %></h5>
           <p class="card-text"><%=fave.strCategory  %> </p>
           <p class="card-text"><%=fave.strInstructions %></p>
+            <form action="/recipes/:id" method="POST">
+              <input type="hidden" name="_method" value="put" />
+              <input type="hidden" value="<%=fave.idMeal  %> " name="recipeId">
+              <input type="hidden" value="1" name="remove">
+            <button type="submit" class="btn btn-danger">Remove from favorites</button></form>
         </div>
       </div>
 <% })} %> 

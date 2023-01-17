@@ -7,9 +7,21 @@
           <div class="card-body">
             <h5 class="card-title"><%=meal.strMeal  %></h5>
             <p class="card-text"><%=meal.strCategory  %> </p>
+            <% let mid = parseInt(meal.idMeal)  %>
+            <% let btnType = favorite.includes(mid) %> 
+            <% if(btnType){ %> 
             <form action="/recipes/:id" method="POST">
+              <input type="hidden" name="_method" value="put" />
               <input type="hidden" value="<%=meal.idMeal  %> " name="recipeId">
-            <button type="submit" class="btn btn-primary">Add to favorites</button></form>
+              <input type="hidden" value="1" name="remove">
+            <button type="submit" class="btn btn-danger">Remove from favorites</button></form>
+            <% } else { %>
+              <form action="/recipes/:id" method="POST">
+                <input type="hidden" name="_method" value="put" />
+                <input type="hidden" value="<%=meal.idMeal  %> " name="recipeId">
+                <input type="hidden" value="0" name="remove">
+              <button type="submit" class="btn btn-primary">Add to favorites</button></form>
+              <% } %>  
           </div>
         </div>
   <% }) %> 

@@ -57,6 +57,6 @@
 * As a user, I want to be able to add comments
 #
 # STRETCH GOALS
-* add images
 * option to click image that takes you to said recipe related to image
+* create another list under my favorites, ex. a desserts favorite list
 
