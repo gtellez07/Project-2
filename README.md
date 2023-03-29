@@ -1,4 +1,5 @@
-# Project Pitch
+# MealMate
+MealMate is a web application that allows users to search and save their favorite recipes from a comprehensive database using the MealDB API. The application provides users with the ability to create accounts, view their profiles, search for recipes by name or ingredient, add recipes to their favorites, and leave comments on their saved recipes. MealMate is built using HTML, CSS, JavaScript, and Express with EJS templates for rendering dynamic content. The application uses PostgreSQL for the database with Sequelize as the ORM and Axios for handling HTTP requests to the MealDB API.
 #
 ## Description
 #
